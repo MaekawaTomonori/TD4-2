@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{81546B2E-C7C9-4B6B-8AB2-CE9DA9F18785}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\engine">
+      <UniqueIdentifier>{9999C4A3-0F04-494C-A6BF-0B7FE007B368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\engine\externals">
+      <UniqueIdentifier>{9A6EBD09-5E0D-4650-AE59-6D0A6C4A0329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\engine\externals\ImGui">
+      <UniqueIdentifier>{BBC4B2DB-9723-43C7-8792-03B43F1361D3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{B7437DD1-45DB-4520-87D8-E59AF47A2C48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{13BF3B58-12B5-4987-920C-C6C9690FA1F6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\shaders">
+      <UniqueIdentifier>{7FF13255-ED03-4A19-B67D-5282F612B3FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{EB4194D5-D7A1-4FF3-B5B9-90AF0FF5FB9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\debug">
+      <UniqueIdentifier>{D9F5C27C-7BD1-4C04-A3F8-7763D3293FB5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\play">
+      <UniqueIdentifier>{4F1F01FB-5F11-403F-B92D-019672369CD8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_demo.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_draw.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_impl_dx12.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_impl_win32.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_tables.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui_widgets.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\externals\ImGui\imgui.cpp">
+      <Filter>..\engine\externals\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="resources\LoadGameResources.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\debug\ParticleTestScene.cpp">
+      <Filter>scene\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\debug\TestScene.cpp">
+      <Filter>scene\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\play\TitleScene.cpp">
+      <Filter>scene\play</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scene\debug\ParticleTestScene.h">
+      <Filter>scene\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\debug\TestScene.h">
+      <Filter>scene\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\play\TitleScene.h">
+      <Filter>scene\play</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
+      <Filter>Resources\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\Object3d.Vs.hlsl">
+      <Filter>Resources\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\Skybox.PS.hlsl">
+      <Filter>Resources\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\Skybox.VS.hlsl">
+      <Filter>Resources\shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shaders\Line.hlsli">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\Object3d.hlsli">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\Particle.hlsli">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\Skybox.hlsli">
+      <Filter>Resources\shaders</Filter>
+    </None>
+    <None Include="Resources\shaders\Sprite.hlsli">
+      <Filter>Resources\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
