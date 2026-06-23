@@ -16,6 +16,10 @@ public:
 	void DrawShadow() override;
 	void DrawGBuffer() override;
 
+#ifdef USE_IMGUI
+	void DrawImGui();
+#endif
+
 protected:
 	void OnUpdatePlaying() override;
 
@@ -29,4 +33,5 @@ private:
 	// テスト用のゲームオブジェクト
 	std::unique_ptr<GameObject> cubeObject_;
 	std::unique_ptr<GameObject> groundObject_;
+	std::unique_ptr<GameObject> targetObject_;
 };

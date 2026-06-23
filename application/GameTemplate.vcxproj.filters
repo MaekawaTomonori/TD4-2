@@ -51,6 +51,7 @@
     <ClInclude Include="scene\play\TitleScene.h">
       <Filter>scene\play</Filter>
     </ClInclude>
+    <ClInclude Include="collision\CollisionLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
