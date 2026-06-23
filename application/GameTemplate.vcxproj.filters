@@ -13,9 +13,6 @@
     <Filter Include="engine\externals">
       <UniqueIdentifier>{F3AF7A1A-16D0-E850-3430-761F4E8FAA5B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\externals\ImGui">
-      <UniqueIdentifier>{6B860BC2-93A6-F270-F747-F2B589C594B2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{55B558C7-EF82-0E6E-00E5-993B9E55D93B}</UniqueIdentifier>
     </Filter>
@@ -30,27 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\engine\externals\ImGui\imgui.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_demo.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_draw.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_impl_dx12.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_impl_win32.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_tables.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\externals\ImGui\imgui_widgets.cpp">
-      <Filter>engine\externals\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resources\LoadGameResources.cpp">
       <Filter>resources</Filter>

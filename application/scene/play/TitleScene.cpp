@@ -26,8 +26,6 @@
 #include "manager/editor/DebugUIManager.h"
 #endif
 
-using namespace ecs;
-
 void TitleScene::Initialize()
 {
 #ifdef USE_IMGUI
