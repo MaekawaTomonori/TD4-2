@@ -7,11 +7,8 @@
     <Filter Include="Resources\shaders">
       <UniqueIdentifier>{7017182E-6FB0-BB7B-B84B-996D35E442E5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine">
-      <UniqueIdentifier>{AD1943A9-FD6D-3D7E-E1E6-AF41A5B0D3E7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\externals">
-      <UniqueIdentifier>{F3AF7A1A-16D0-E850-3430-761F4E8FAA5B}</UniqueIdentifier>
+    <Filter Include="collision">
+      <UniqueIdentifier>{CB5E8A23-EC9E-46A8-5837-2247AF29A414}</UniqueIdentifier>
     </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{55B558C7-EF82-0E6E-00E5-993B9E55D93B}</UniqueIdentifier>
@@ -42,6 +39,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="collision\CollisionLayer.h">
+      <Filter>collision</Filter>
+    </ClInclude>
     <ClInclude Include="scene\debug\ParticleTestScene.h">
       <Filter>scene\debug</Filter>
     </ClInclude>
@@ -51,7 +51,6 @@
     <ClInclude Include="scene\play\TitleScene.h">
       <Filter>scene\play</Filter>
     </ClInclude>
-    <ClInclude Include="collision\CollisionLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
