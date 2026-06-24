@@ -11,6 +11,9 @@
 #include "engine/gameobject/component/collision/AABBColliderComponent.h"
 #include "application/collision/CollisionLayer.h"
 #include "base/Logger.h"
+#include "application/gameobject/component/action/StatusComponent.h"
+#include "application/gameobject/component/action/PhysicsComponent.h"
+
 
 using namespace GameObjectComponent;
 
@@ -55,27 +58,65 @@ void TestScene::Initialize()
 	cubeObject_->SetPosition({ 0.0f, 2.0f, 0.0f });
 	cubeObject_->SetScale({ 2.0f, 2.0f, 2.0f });
 	
+	// アクション・物理・ステータスコンポーネントの追加
+	cubeObject_->AddComponent("Status", std::make_unique<StatusComponent>(cubeObject_.get()));
+	cubeObject_->AddComponent("Physics", std::make_unique<PhysicsComponent>(cubeObject_.get()));
+
 	// AABBコライダーの追加
 	cubeObject_->AddComponent("Collider", std::make_unique<AABBColliderComponent>(cubeObject_.get()));
 	if (auto collider = cubeObject_->GetComponent<AABBColliderComponent>())
 	{
-		collider->SetUseSubstep(true); // サブステップ判定を有効化
 		collider->SetCollisionLayer(CollisionLayer::Player);
-		collider->SetCollisionMask(CollisionLayer::Enemy | CollisionLayer::Stage);
+		collider->SetCollisionMask(CollisionLayer::Enemy | CollisionLayer::Stage | CollisionLayer::Terrain);
 		
-		collider->SetOnEnter([](const CollisionInfo& info) {
+		// 衝突時の共通押し戻し・接地処理
+		auto handleCubeCollision = [this](const CollisionInfo& info) {
+			if (!info.otherCollider) return;
+			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain)) return;
+			if (!cubeObject_) return;
+
+			// 衝突情報（法線とめり込み深さ）から押し戻しベクトルを計算して位置を補正
+			Vector3 pos = cubeObject_->GetPosition();
+			pos += info.normal * info.depth;
+			cubeObject_->SetPosition(pos);
+
+			// 接地判定と速度リセット
+			auto physics = cubeObject_->GetComponent<PhysicsComponent>();
+			if (!physics) return;
+
+			if (info.normal.y > 0.0f)
+			{
+				physics->SetGrounded(true);
+				Vector3 vel = physics->GetVelocity();
+				if (vel.y < 0.0f)
+				{
+					vel.y = 0.0f;
+					physics->SetVelocity(vel);
+				}
+			}
+		};
+
+		collider->SetOnEnter([this, handleCubeCollision](const CollisionInfo& info) {
 			Logger::Log("TestCube: OnEnter with " + info.other->GetName() + 
 				" | Normal: (" + std::to_string(info.normal.x) + ", " + std::to_string(info.normal.y) + ", " + std::to_string(info.normal.z) + ")" +
 				" | Depth: " + std::to_string(info.depth) + "\n");
-		});
-		collider->SetOnStay([this](const CollisionInfo& info) {
-			// 衝突情報（法線とめり込み深さ）から押し戻しベクトルを計算して位置を補正
-			if (cubeObject_)
+			handleCubeCollision(info);
+
+			// 相手がEnemyの場合にHPを減らす
+			if (!info.otherCollider) return;
+			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Enemy)) return;
+
+			auto status = cubeObject_->GetComponent<StatusComponent>();
+			if (!status) return;
+
+			int32_t prevHp = status->GetHp();
+			if (status->ApplyDamage(10))
 			{
-				Vector3 pos = cubeObject_->GetPosition();
-				pos += info.normal * info.depth;
-				cubeObject_->SetPosition(pos);
+				Logger::Log("TestCube Damaged! HP: " + std::to_string(prevHp) + " -> " + std::to_string(status->GetHp()) + "\n");
 			}
+		});
+		collider->SetOnStay([handleCubeCollision](const CollisionInfo& info) {
+			handleCubeCollision(info);
 		});
 		collider->SetOnExit([](const CollisionInfo& info) {
 			Logger::Log("TestCube: OnExit with " + info.other->GetName() + "\n");
@@ -92,15 +133,49 @@ void TestScene::Initialize()
 	targetObject_->SetScale({ 2.0f, 2.0f, 2.0f });
 	targetObject_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f }); // 分かりやすく赤色にする
 
+	// アクション・物理・ステータスコンポーネントの追加
+	targetObject_->AddComponent("Status", std::make_unique<StatusComponent>(targetObject_.get()));
+	targetObject_->AddComponent("Physics", std::make_unique<PhysicsComponent>(targetObject_.get()));
+
 	// AABBコライダーの追加
 	targetObject_->AddComponent("Collider", std::make_unique<AABBColliderComponent>(targetObject_.get()));
 	if (auto collider = targetObject_->GetComponent<AABBColliderComponent>())
 	{
 		collider->SetCollisionLayer(CollisionLayer::Enemy);
-		collider->SetCollisionMask(CollisionLayer::Player);
+		collider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Terrain);
 		
-		collider->SetOnEnter([](const CollisionInfo& info) {
+		auto handleTargetCollision = [this](const CollisionInfo& info) {
+			if (!info.otherCollider) return;
+			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain)) return;
+			if (!targetObject_) return;
+
+			// 衝突情報（法線とめり込み深さ）から押し戻しベクトルを計算して位置を補正
+			Vector3 pos = targetObject_->GetPosition();
+			pos += info.normal * info.depth;
+			targetObject_->SetPosition(pos);
+
+			// 接地判定と速度リセット
+			auto physics = targetObject_->GetComponent<PhysicsComponent>();
+			if (!physics) return;
+
+			if (info.normal.y > 0.0f)
+			{
+				physics->SetGrounded(true);
+				Vector3 vel = physics->GetVelocity();
+				if (vel.y < 0.0f)
+				{
+					vel.y = 0.0f;
+					physics->SetVelocity(vel);
+				}
+			}
+		};
+
+		collider->SetOnEnter([handleTargetCollision](const CollisionInfo& info) {
 			Logger::Log("TestTarget: OnEnter with " + info.other->GetName() + "\n");
+			handleTargetCollision(info);
+		});
+		collider->SetOnStay([handleTargetCollision](const CollisionInfo& info) {
+			handleTargetCollision(info);
 		});
 		collider->SetOnExit([](const CollisionInfo& info) {
 			Logger::Log("TestTarget: OnExit with " + info.other->GetName() + "\n");
@@ -108,17 +183,24 @@ void TestScene::Initialize()
 	}
 	GameObjectManager::GetInstance()->Register(targetObject_.get());
 
-	// 3. 地面プレーンオブジェクトの作成（X軸を回転させて配置）
-	groundObject_ = std::make_unique<GameObject>("GroundPlane");
-	groundObject_->SetName("GroundPlane");
+	// 3. 地面キューブオブジェクトの作成
+	groundObject_ = std::make_unique<GameObject>("GroundCube");
+	groundObject_->SetName("GroundCube");
 	groundObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
-	groundObject_->SetModel("plane");
-	groundObject_->SetPosition({ 0.0f, 0.0f, 0.0f });
-	groundObject_->SetRotation({ -std::numbers::pi_v<float> / 2.0f, 0.0f, 0.0f });
-	groundObject_->SetScale({ 50.0f, 50.0f, 50.0f });
+	groundObject_->SetModel("cube");
+	groundObject_->SetPosition({ 0.0f, -0.5f, 0.0f });
+	groundObject_->SetScale({ 50.0f, 1.0f, 50.0f });
 	if (auto* obj3d = groundObject_->GetObject3d())
 	{
 		obj3d->SetCastShadow(false);
+	}
+
+	// 地面のAABBコライダーの追加
+	groundObject_->AddComponent("Collider", std::make_unique<AABBColliderComponent>(groundObject_.get()));
+	if (auto collider = groundObject_->GetComponent<AABBColliderComponent>())
+	{
+		collider->SetCollisionLayer(CollisionLayer::Terrain);
+		collider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Enemy);
 	}
 	GameObjectManager::GetInstance()->Register(groundObject_.get());
 

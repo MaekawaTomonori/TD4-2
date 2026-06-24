@@ -118,6 +118,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="gameobject\component\action\PhysicsComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\StatusComponent.cpp" />
     <ClCompile Include="resources\LoadGameResources.cpp" />
     <ClCompile Include="scene\debug\ParticleTestScene.cpp" />
     <ClCompile Include="scene\debug\TestScene.cpp" />
@@ -126,6 +128,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision\CollisionLayer.h" />
+    <ClInclude Include="gameobject\component\action\PhysicsComponent.h" />
+    <ClInclude Include="gameobject\component\action\StatusComponent.h" />
     <ClInclude Include="scene\debug\ParticleTestScene.h" />
     <ClInclude Include="scene\debug\TestScene.h" />
     <ClInclude Include="scene\play\TitleScene.h" />

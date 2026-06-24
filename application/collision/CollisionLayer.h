@@ -11,5 +11,6 @@ namespace CollisionLayer
 	static constexpr ColliderLayer Enemy        = 1 << 2; // 敵
 	static constexpr ColliderLayer EnemyBullet  = 1 << 3; // 敵の弾
 	static constexpr ColliderLayer Stage        = 1 << 4; // 地形
+	static constexpr ColliderLayer Terrain      = 1 << 5; // 地形（新規追加）
 	static constexpr ColliderLayer All          = 0xFFFFFFFF;
 }

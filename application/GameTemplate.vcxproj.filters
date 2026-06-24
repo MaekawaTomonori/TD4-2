@@ -10,6 +10,15 @@
     <Filter Include="collision">
       <UniqueIdentifier>{CB5E8A23-EC9E-46A8-5837-2247AF29A414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gameobject">
+      <UniqueIdentifier>{77FE4252-2F4E-5102-6545-8111A6DB2382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gameobject\component">
+      <UniqueIdentifier>{678FDE27-F550-C862-3050-C8AD830AB54F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gameobject\component\action">
+      <UniqueIdentifier>{2F863FFC-E377-71D8-89DA-01F2AD6F1555}</UniqueIdentifier>
+    </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{55B558C7-EF82-0E6E-00E5-993B9E55D93B}</UniqueIdentifier>
     </Filter>
@@ -24,6 +33,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="gameobject\component\action\PhysicsComponent.cpp">
+      <Filter>gameobject\component\action</Filter>
+    </ClCompile>
+    <ClCompile Include="gameobject\component\action\StatusComponent.cpp">
+      <Filter>gameobject\component\action</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resources\LoadGameResources.cpp">
       <Filter>resources</Filter>
@@ -41,6 +56,12 @@
   <ItemGroup>
     <ClInclude Include="collision\CollisionLayer.h">
       <Filter>collision</Filter>
+    </ClInclude>
+    <ClInclude Include="gameobject\component\action\PhysicsComponent.h">
+      <Filter>gameobject\component\action</Filter>
+    </ClInclude>
+    <ClInclude Include="gameobject\component\action\StatusComponent.h">
+      <Filter>gameobject\component\action</Filter>
     </ClInclude>
     <ClInclude Include="scene\debug\ParticleTestScene.h">
       <Filter>scene\debug</Filter>
