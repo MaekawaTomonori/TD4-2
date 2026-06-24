@@ -97,9 +97,6 @@ void TestScene::Initialize()
 		};
 
 		collider->SetOnEnter([this, handleCubeCollision](const CollisionInfo& info) {
-			Logger::Log("TestCube: OnEnter with " + info.other->GetName() + 
-				" | Normal: (" + std::to_string(info.normal.x) + ", " + std::to_string(info.normal.y) + ", " + std::to_string(info.normal.z) + ")" +
-				" | Depth: " + std::to_string(info.depth) + "\n");
 			handleCubeCollision(info);
 
 			// 相手がEnemyの場合にHPを減らす
@@ -119,7 +116,6 @@ void TestScene::Initialize()
 			handleCubeCollision(info);
 		});
 		collider->SetOnExit([](const CollisionInfo& info) {
-			Logger::Log("TestCube: OnExit with " + info.other->GetName() + "\n");
 		});
 	}
 	GameObjectManager::GetInstance()->Register(cubeObject_.get());
@@ -171,14 +167,12 @@ void TestScene::Initialize()
 		};
 
 		collider->SetOnEnter([handleTargetCollision](const CollisionInfo& info) {
-			Logger::Log("TestTarget: OnEnter with " + info.other->GetName() + "\n");
 			handleTargetCollision(info);
 		});
 		collider->SetOnStay([handleTargetCollision](const CollisionInfo& info) {
 			handleTargetCollision(info);
 		});
 		collider->SetOnExit([](const CollisionInfo& info) {
-			Logger::Log("TestTarget: OnExit with " + info.other->GetName() + "\n");
 		});
 	}
 	GameObjectManager::GetInstance()->Register(targetObject_.get());
