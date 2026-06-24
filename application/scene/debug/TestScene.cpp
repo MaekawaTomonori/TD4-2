@@ -87,11 +87,11 @@ void TestScene::Initialize()
 			if (info.normal.y > 0.0f)
 			{
 				physics->SetGrounded(true);
-				Vector3 vel = physics->GetVelocity();
+				Vector3 vel = physics->GetExternalVelocity();
 				if (vel.y < 0.0f)
 				{
 					vel.y = 0.0f;
-					physics->SetVelocity(vel);
+					physics->SetExternalVelocity(vel);
 				}
 			}
 		};
@@ -157,11 +157,11 @@ void TestScene::Initialize()
 			if (info.normal.y > 0.0f)
 			{
 				physics->SetGrounded(true);
-				Vector3 vel = physics->GetVelocity();
+				Vector3 vel = physics->GetExternalVelocity();
 				if (vel.y < 0.0f)
 				{
 					vel.y = 0.0f;
-					physics->SetVelocity(vel);
+					physics->SetExternalVelocity(vel);
 				}
 			}
 		};

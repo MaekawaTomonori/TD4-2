@@ -3,6 +3,7 @@
 #include "engine/time/TimeManager.h"
 #include "engine/gameobject/component/base/ComponentFactory.h"
 #include <cmath>
+#include <algorithm>
 
 // ファクトリに登録
 REGISTER_COMPONENT(PhysicsComponent)
@@ -12,11 +13,13 @@ namespace GameObjectComponent
 	PhysicsComponent::PhysicsComponent(::GameObject* owner)
 	{
 		// メンバ変数をJSONエディタ/シリアライズ用に登録
-		Register("velocity", &velocity_);
+		Register("movementVelocity", &movementVelocity_);
+		Register("externalVelocity", &externalVelocity_);
 		Register("externalForce", &externalForce_);
+		Register("constantExternalForce", &constantExternalForce_);
 		Register("mass", &mass_);
-		Register("friction", &friction_);
-		Register("forceDecay", &forceDecay_);
+		Register("externalFriction", &externalFriction_);
+		Register("externalAirResistance", &externalAirResistance_);
 		Register("useGravity", &useGravity_);
 		Register("isGrounded", &isGrounded_);
 		Register("gravity", &gravity_);
@@ -34,47 +37,50 @@ namespace GameObjectComponent
 			return;
 		}
 
-		// 重力の適用
+		// 1. 外部の力から加速度を計算 (F = ma => a = F/m)
+		Vector3 totalForce = constantExternalForce_ + externalForce_;
+		Vector3 acceleration = totalForce / (mass_ > 0.0f ? mass_ : 1.0f);
+
+		// 2. 加速度を外部物理速度に適用
+		externalVelocity_ += acceleration * dt;
+
+		// 重力の適用（外部物理速度のY軸に適用）
 		if (useGravity_)
 		{
 			if (!isGrounded_)
 			{
-				velocity_.y -= gravity_ * dt;
+				externalVelocity_.y -= gravity_ * dt;
 			}
 			else
 			{
 				// 接地中は下向きに極小の速度（吸着バイアス）を与えることで、
 				// 毎フレーム確実にコライダーが地面と交差し、接地判定が安定するようにする
-				velocity_.y = -0.1f;
+				externalVelocity_.y = -0.1f;
 			}
 		}
 
-		// 外力を速度に加算し、外力自体は減衰させる (秒単位 of 60fps)
-		velocity_ += externalForce_ * dt;
-		externalForce_ = externalForce_ * std::pow(forceDecay_, dt * 60.0f);
+		// 3. 摩擦・空気抵抗の適用 (外部物理速度のXZ軸を減衰)
+		float currentDrag = isGrounded_ ? externalFriction_ : externalAirResistance_;
+		float dragFactor = std::pow(currentDrag, dt * 60.0f);
+		externalVelocity_.x *= dragFactor;
+		externalVelocity_.z *= dragFactor;
 
-		// 摩擦の適用（接地している場合）
-		if (isGrounded_)
-		{
-			float frictionFactor = std::pow(friction_, dt * 60.0f);
-			velocity_.x *= frictionFactor;
-			velocity_.z *= frictionFactor;
-		}
-
-		// 座標の更新
+		// 4. 座標の更新 (自己移動速度 + 外部物理速度 を合算)
+		Vector3 finalVelocity = movementVelocity_ + externalVelocity_;
 		Vector3 currentPos = owner->GetPosition();
-		currentPos += velocity_ * dt;
+		currentPos += finalVelocity * dt;
 		owner->SetPosition(currentPos);
 
-		// 接地フラグをリセット（この後の衝突判定で接地していれば OnStay 等で true に再設定される）
+		// 瞬間的な外力と接地状態をリセット
+		externalForce_ = { 0.0f, 0.0f, 0.0f };
 		isGrounded_ = false;
 	}
 
-	void PhysicsComponent::AddForce(const Vector3& force)
+	void PhysicsComponent::AddExternalForce(const Vector3& force)
 	{
 		if (mass_ > 0.0f)
 		{
-			externalForce_ += force / mass_;
+			externalForce_ += force;
 		}
 	}
 }
