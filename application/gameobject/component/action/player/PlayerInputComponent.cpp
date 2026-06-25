@@ -1,0 +1,44 @@
+#include "PlayerInputComponent.h"
+#include "input/Input.h"
+
+void GameObjectComponent::PlayerInputComponent::Update(GameObject* owner)
+{
+	// 移動方向のベクトル
+	// 前後
+	if (Input::GetInstance()->PushKey(DIK_W))
+	{
+		moveDirection_.z = 1.0f;
+	}
+	else if (Input::GetInstance()->PushKey(DIK_S))
+	{
+		moveDirection_.z = -1.0f;
+	}
+	else
+	{
+		moveDirection_.z = 0.0f;
+	}
+
+	// 左右
+	if (Input::GetInstance()->PushKey(DIK_A))
+	{
+		moveDirection_.x = -1.0f;
+	}
+	else if (Input::GetInstance()->PushKey(DIK_D))
+	{
+		moveDirection_.x = 1.0f;
+	}
+	else
+	{
+		moveDirection_.x = 0.0f;
+	}
+
+	// 反射トリガーの判定
+	if (Input::GetInstance()->PushKey(DIK_SPACE))
+	{
+		isReflectTriggered_ = true;
+	}
+	else
+	{
+		isReflectTriggered_ = false;
+	}
+}

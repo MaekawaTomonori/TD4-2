@@ -33,10 +33,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="gameobject\component\action\PhysicsComponent.cpp">
+    <ClCompile Include="gameobject\component\action\common\PhysicsComponent.cpp">
       <Filter>gameobject\component\action</Filter>
     </ClCompile>
-    <ClCompile Include="gameobject\component\action\StatusComponent.cpp">
+    <ClCompile Include="gameobject\component\action\common\StatusComponent.cpp">
       <Filter>gameobject\component\action</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
@@ -52,15 +52,19 @@
     <ClCompile Include="scene\play\TitleScene.cpp">
       <Filter>scene\play</Filter>
     </ClCompile>
+    <ClCompile Include="gameobject\component\action\player\PlayerInputComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerMoveComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerReflectComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerAttackComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision\CollisionLayer.h">
       <Filter>collision</Filter>
     </ClInclude>
-    <ClInclude Include="gameobject\component\action\PhysicsComponent.h">
+    <ClInclude Include="gameobject\component\action\common\PhysicsComponent.h">
       <Filter>gameobject\component\action</Filter>
     </ClInclude>
-    <ClInclude Include="gameobject\component\action\StatusComponent.h">
+    <ClInclude Include="gameobject\component\action\common\StatusComponent.h">
       <Filter>gameobject\component\action</Filter>
     </ClInclude>
     <ClInclude Include="scene\debug\ParticleTestScene.h">
@@ -72,6 +76,10 @@
     <ClInclude Include="scene\play\TitleScene.h">
       <Filter>scene\play</Filter>
     </ClInclude>
+    <ClInclude Include="gameobject\component\action\player\PlayerInputComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerMoveComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerReflectComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerAttackComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

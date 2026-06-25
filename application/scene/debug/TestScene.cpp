@@ -11,9 +11,10 @@
 #include "engine/gameobject/component/collision/AABBColliderComponent.h"
 #include "application/collision/CollisionLayer.h"
 #include "base/Logger.h"
-#include "application/gameobject/component/action/StatusComponent.h"
-#include "application/gameobject/component/action/PhysicsComponent.h"
-
+#include "application/gameobject/component/action/common/StatusComponent.h"
+#include "application/gameobject/component/action/common/PhysicsComponent.h"
+#include "application/gameobject/component/action/player/PlayerMoveComponent.h"
+#include "application/gameobject/component/action/player/PlayerInputComponent.h"
 
 using namespace GameObjectComponent;
 
@@ -59,6 +60,8 @@ void TestScene::Initialize()
 	cubeObject_->SetScale({ 2.0f, 2.0f, 2.0f });
 	
 	// アクション・物理・ステータスコンポーネントの追加
+	cubeObject_->AddComponent("Input", std::make_unique<PlayerInputComponent>());
+	cubeObject_->AddComponent("Move", std::make_unique<PlayerMoveComponent>(sceneManager_->GetCameraManager()->GetActiveCamera()));
 	cubeObject_->AddComponent("Status", std::make_unique<StatusComponent>(cubeObject_.get()));
 	cubeObject_->AddComponent("Physics", std::make_unique<PhysicsComponent>(cubeObject_.get()));
 
@@ -182,9 +185,9 @@ void TestScene::Initialize()
 	groundObject_->SetName("GroundCube");
 	groundObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	groundObject_->SetModel("cube");
-	groundObject_->GetModel()->SetUVScale({ 100.0f, 100.0f, 1.0f });
-	groundObject_->SetPosition({ 0.0f, -0.5f, 0.0f });
-	groundObject_->SetScale({ 50.0f, 1.0f, 50.0f });
+	groundObject_->GetModel()->SetUVScale({ 300.0f, 300.0f, 1.0f });
+	groundObject_->SetPosition({ 0.0f, -5.0f, 0.0f });
+	groundObject_->SetScale({ 150.0f, 10.0f, 150.0f });
 	if (auto* obj3d = groundObject_->GetObject3d())
 	{
 		obj3d->SetCastShadow(false);
