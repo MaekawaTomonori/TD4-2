@@ -182,6 +182,7 @@ void TestScene::Initialize()
 	groundObject_->SetName("GroundCube");
 	groundObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	groundObject_->SetModel("cube");
+	groundObject_->GetModel()->SetUVScale({ 100.0f, 100.0f, 1.0f });
 	groundObject_->SetPosition({ 0.0f, -0.5f, 0.0f });
 	groundObject_->SetScale({ 50.0f, 1.0f, 50.0f });
 	if (auto* obj3d = groundObject_->GetObject3d())

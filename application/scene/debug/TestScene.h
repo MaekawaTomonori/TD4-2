@@ -25,8 +25,8 @@ protected:
 
 private:
 	// ディレクショナルライト設定
-	static constexpr Vector3 kLightDirection = { 0.0f, -1.0f, 0.0f };
-	static constexpr float kLightIntensity = 1.0f;
+	static constexpr Vector3 kLightDirection = { -0.2f, -1.0f, 0.3f };
+	static constexpr float kLightIntensity = 0.6f;
 
 	std::unique_ptr<DebugCamera> debugCamera_;
 	
