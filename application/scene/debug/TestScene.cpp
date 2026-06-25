@@ -38,6 +38,10 @@ void TestScene::Initialize()
 	debugCamera_->Initialize(sceneManager_->GetCameraManager()->GetActiveCamera());
 	debugCamera_->Start({ 0.0f, 10.0f, -30.0f }, { 0.2f, 0.0f, 0.0f });
 
+	// 追従カメラの初期化
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize(sceneManager_->GetCameraManager()->GetActiveCamera());
+
 	// ゲームオブジェクトマネージャーの初期化
 	GameObjectManager::GetInstance()->Initialize();
 
@@ -121,6 +125,9 @@ void TestScene::Initialize()
 		collider->SetOnExit([](const CollisionInfo& info) {
 		});
 	}
+	// こいつに追従カメラを追従させる
+	followCamera_->Start(&cubeObject_->GetPosition(), 15.0f, 0.1f);
+	// マネージャーに登録
 	GameObjectManager::GetInstance()->Register(cubeObject_.get());
 
 	// 2. テスト用ターゲットオブジェクトの作成
@@ -224,6 +231,7 @@ void TestScene::Finalize()
 	groundObject_.reset();
 	targetObject_.reset();
 	debugCamera_.reset();
+	followCamera_.reset();
 }
 
 void TestScene::OnUpdatePlaying()
@@ -231,6 +239,10 @@ void TestScene::OnUpdatePlaying()
 	if (debugCamera_)
 	{
 		debugCamera_->Update();
+	}
+	if (followCamera_)
+	{
+		followCamera_->Update();
 	}
 
 	// コリジョンマネージャーの前フレーム位置更新
