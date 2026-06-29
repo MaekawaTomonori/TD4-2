@@ -76,14 +76,16 @@ void TestScene::Initialize()
 	if (auto collider = cubeObject_->GetComponent<AABBColliderComponent>())
 	{
 		collider->SetCollisionLayer(CollisionLayer::Player);
-		collider->SetCollisionMask(CollisionLayer::Enemy | CollisionLayer::Stage | CollisionLayer::Terrain);
+		collider->SetCollisionMask(CollisionLayer::Enemy | CollisionLayer::Stage | CollisionLayer::Terrain | CollisionLayer::Bumpers);
 
 		// 衝突時の共通押し戻し・接地処理
 		auto handleCubeCollision = [this](const CollisionInfo& info)
 		{
 			if (!info.otherCollider)
 				return;
-			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain))
+			// Terrain, Stage, Bumpers のいずれかであれば押し戻す
+			uint32_t targetLayers = CollisionLayer::Terrain | CollisionLayer::Stage | CollisionLayer::Bumpers;
+			if (!(info.otherCollider->GetCollisionLayer() & targetLayers))
 				return;
 			if (!cubeObject_)
 				return;
@@ -147,13 +149,14 @@ void TestScene::Initialize()
 	// アクション・物理・ステータスコンポーネントの追加
 	targetObject_->AddComponent("Status", std::make_unique<StatusComponent>(targetObject_.get()));
 	targetObject_->AddComponent("Physics", std::make_unique<PhysicsComponent>(targetObject_.get()));
+	targetObject_->GetComponent<PhysicsComponent>()->SetVelocity({0.0f, 0.0f, -5.0f});
 
 	// AABBコライダーの追加
 	targetObject_->AddComponent("Collider", std::make_unique<AABBColliderComponent>(targetObject_.get()));
 	if (auto collider = targetObject_->GetComponent<AABBColliderComponent>())
 	{
 		collider->SetCollisionLayer(CollisionLayer::Enemy);
-		collider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Terrain);
+		collider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Terrain | CollisionLayer::Bumpers);
 
 		auto handleTargetCollision = [this](const CollisionInfo& info)
 		{
@@ -200,7 +203,7 @@ void TestScene::Initialize()
 	groundObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	groundObject_->SetModel("cube");
 	groundObject_->GetModel()->SetUVScale({300.0f, 300.0f, 1.0f});
-	groundObject_->SetPosition({0.0f, -5.0f, 0.0f});
+	groundObject_->SetPosition({0.0f, -10.0f, 0.0f});
 	groundObject_->SetScale({150.0f, 10.0f, 150.0f});
 	if (auto* obj3d = groundObject_->GetObject3d())
 	{
@@ -216,6 +219,45 @@ void TestScene::Initialize()
 	}
 	GameObjectManager::GetInstance()->Register(groundObject_.get());
 
+
+	// 障害物：バンパー
+	bumper_ = std::make_unique<GameObject>("Bumper");
+	bumper_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
+	bumper_->SetName("Bumper");
+	bumper_->SetModel("cube");
+	bumper_->SetScale({2.0f, 2.0f, 2.0f});
+	bumper_->SetPosition({5.0f, 2.0f, -30.0f});
+
+	auto bumperCollider = std::make_unique<AABBColliderComponent>(bumper_.get());
+	bumperCollider->SetCollisionLayer(CollisionLayer::Bumpers);
+	bumperCollider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Enemy);
+
+	// 押し戻しと跳ね返りの共通処理
+	auto handleBumperCollision = [](const CollisionInfo& info) {
+		if (!info.otherCollider) return;
+
+		auto physics = info.otherCollider->GetOwner()->GetComponent<PhysicsComponent>();
+		if (physics)
+		{
+			// 反対に弾き飛ばす
+			Vector3 bounceVelocity = physics->GetMovementVelocity() * -1.0f;
+			physics->SetMovementVelocity(bounceVelocity);
+		}
+	};
+
+	// 衝突した瞬間（OnEnter）に跳ね返り速度を与える
+	bumperCollider->SetOnEnter([handleBumperCollision](const CollisionInfo& info) {
+		handleBumperCollision(info);
+	});
+
+	// 衝突中（OnStay）も押し戻しを継続
+	bumperCollider->SetOnStay([handleBumperCollision](const CollisionInfo& info) {
+		handleBumperCollision(info);
+	});
+
+	bumper_->AddComponent("Collider", std::move(bumperCollider));
+
+	GameObjectManager::GetInstance()->Register(bumper_.get());
 	StartState(SceneState::Playing);
 }
 

@@ -37,4 +37,5 @@ private:
 	std::unique_ptr<GameObject> cubeObject_;
 	std::unique_ptr<GameObject> groundObject_;
 	std::unique_ptr<GameObject> targetObject_;
+	std::unique_ptr<GameObject> bumper_;
 };
