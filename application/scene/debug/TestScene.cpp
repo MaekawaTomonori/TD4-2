@@ -1,28 +1,29 @@
 #include "TestScene.h"
-#include <numbers>
+#include "application/collision/CollisionLayer.h"
+#include "application/gameobject/component/action/common/PhysicsComponent.h"
+#include "application/gameobject/component/action/common/StatusComponent.h"
+#include "application/gameobject/component/action/player/PlayerInputComponent.h"
+#include "application/gameobject/component/action/player/PlayerMoveComponent.h"
+#include "base/Logger.h"
+#include "engine/gameobject/component/collision/AABBColliderComponent.h"
+#include "engine/gameobject/component/collision/CollisionManager.h"
 #include "engine/gameobject/manager/GameObjectManager.h"
 #include "engine/graphics/3d/Object3dCommon.h"
+#include "externals/imgui/imgui.h"
+#include "input/Input.h"
+#include "manager/editor/GameObjectEditor.h"
 #include "manager/scene/CameraManager.h"
 #include "manager/scene/LightManager.h"
 #include "scene/manager/SceneManager.h"
-#include "manager/editor/GameObjectEditor.h"
-#include "externals/imgui/imgui.h"
-#include "engine/gameobject/component/collision/CollisionManager.h"
-#include "engine/gameobject/component/collision/AABBColliderComponent.h"
-#include "application/collision/CollisionLayer.h"
-#include "base/Logger.h"
-#include "application/gameobject/component/action/common/StatusComponent.h"
-#include "application/gameobject/component/action/common/PhysicsComponent.h"
-#include "application/gameobject/component/action/player/PlayerMoveComponent.h"
-#include "application/gameobject/component/action/player/PlayerInputComponent.h"
+#include <numbers>
 
 using namespace GameObjectComponent;
 
 void TestScene::Initialize()
 {
 	// カメラの設定
-	sceneManager_->GetCameraManager()->GetActiveCamera()->SetTranslate({ 0.0f, 10.0f, 30.0f });
-	sceneManager_->GetCameraManager()->GetActiveCamera()->SetRotate({ 0.1f, 0.0f, 0.0f });
+	sceneManager_->GetCameraManager()->GetActiveCamera()->SetTranslate({0.0f, 10.0f, 30.0f});
+	sceneManager_->GetCameraManager()->GetActiveCamera()->SetRotate({0.1f, 0.0f, 0.0f});
 
 	// ライトの調整
 	DirectionalLight dirLight = sceneManager_->GetLightManager()->GetDirectionalLight();
@@ -36,7 +37,7 @@ void TestScene::Initialize()
 	// デバッグカメラの初期化
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(sceneManager_->GetCameraManager()->GetActiveCamera());
-	debugCamera_->Start({ 0.0f, 10.0f, -30.0f }, { 0.2f, 0.0f, 0.0f });
+	debugCamera_->Start({0.0f, 10.0f, -30.0f}, {0.2f, 0.0f, 0.0f});
 
 	// 追従カメラの初期化
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -52,7 +53,8 @@ void TestScene::Initialize()
 	GameObjectEditor::GetInstance()->Initialize();
 
 #ifdef USE_IMGUI
-	DebugUIManager::GetInstance()->RegisterDebugUI(this, "Collision Layer Test", [this]() { this->DrawImGui(); }, DebugUIArea::Console);
+	DebugUIManager::GetInstance()->RegisterDebugUI(this, "Collision Layer Test", [this]()
+												   { this->DrawImGui(); }, DebugUIArea::Console);
 #endif
 
 	// 1. テスト用キューブオブジェクトの作成
@@ -60,9 +62,9 @@ void TestScene::Initialize()
 	cubeObject_->SetName("TestCube");
 	cubeObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	cubeObject_->SetModel("cube");
-	cubeObject_->SetPosition({ 0.0f, 2.0f, 0.0f });
-	cubeObject_->SetScale({ 2.0f, 2.0f, 2.0f });
-	
+	cubeObject_->SetPosition({0.0f, 2.0f, 0.0f});
+	cubeObject_->SetScale({2.0f, 2.0f, 2.0f});
+
 	// アクション・物理・ステータスコンポーネントの追加
 	cubeObject_->AddComponent("Input", std::make_unique<PlayerInputComponent>());
 	cubeObject_->AddComponent("Move", std::make_unique<PlayerMoveComponent>(sceneManager_->GetCameraManager()->GetActiveCamera()));
@@ -75,12 +77,16 @@ void TestScene::Initialize()
 	{
 		collider->SetCollisionLayer(CollisionLayer::Player);
 		collider->SetCollisionMask(CollisionLayer::Enemy | CollisionLayer::Stage | CollisionLayer::Terrain);
-		
+
 		// 衝突時の共通押し戻し・接地処理
-		auto handleCubeCollision = [this](const CollisionInfo& info) {
-			if (!info.otherCollider) return;
-			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain)) return;
-			if (!cubeObject_) return;
+		auto handleCubeCollision = [this](const CollisionInfo& info)
+		{
+			if (!info.otherCollider)
+				return;
+			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain))
+				return;
+			if (!cubeObject_)
+				return;
 
 			// 衝突情報（法線とめり込み深さ）から押し戻しベクトルを計算して位置を補正
 			Vector3 pos = cubeObject_->GetPosition();
@@ -89,7 +95,8 @@ void TestScene::Initialize()
 
 			// 接地判定と速度リセット
 			auto physics = cubeObject_->GetComponent<PhysicsComponent>();
-			if (!physics) return;
+			if (!physics)
+				return;
 
 			if (info.normal.y > 0.0f)
 			{
@@ -103,7 +110,8 @@ void TestScene::Initialize()
 			}
 		};
 
-		collider->SetOnEnter([this, handleCubeCollision](const CollisionInfo& info) {
+		collider->SetOnEnter([this, handleCubeCollision](const CollisionInfo& info)
+							 {
 			handleCubeCollision(info);
 
 			// 相手がEnemyの場合にHPを減らす
@@ -117,16 +125,13 @@ void TestScene::Initialize()
 			if (status->ApplyDamage(10))
 			{
 				Logger::Log("TestCube Damaged! HP: " + std::to_string(prevHp) + " -> " + std::to_string(status->GetHp()) + "\n");
-			}
-		});
-		collider->SetOnStay([handleCubeCollision](const CollisionInfo& info) {
-			handleCubeCollision(info);
-		});
-		collider->SetOnExit([](const CollisionInfo& info) {
-		});
+			} });
+		collider->SetOnStay([handleCubeCollision](const CollisionInfo& info)
+							{ handleCubeCollision(info); });
+		collider->SetOnExit([](const CollisionInfo& info) {});
 	}
 	// こいつに追従カメラを追従させる
-	followCamera_->Start(&cubeObject_->GetPosition(), 15.0f, 0.1f);
+	followCamera_->Start(&cubeObject_->GetPosition(), 30.0f, 0.05f);
 	// マネージャーに登録
 	GameObjectManager::GetInstance()->Register(cubeObject_.get());
 
@@ -135,9 +140,9 @@ void TestScene::Initialize()
 	targetObject_->SetName("TestTarget");
 	targetObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	targetObject_->SetModel("cube");
-	targetObject_->SetPosition({ 5.0f, 2.0f, 0.0f });
-	targetObject_->SetScale({ 2.0f, 2.0f, 2.0f });
-	targetObject_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f }); // 分かりやすく赤色にする
+	targetObject_->SetPosition({5.0f, 2.0f, 0.0f});
+	targetObject_->SetScale({2.0f, 2.0f, 2.0f});
+	targetObject_->SetColor({1.0f, 0.0f, 0.0f, 1.0f}); // 分かりやすく赤色にする
 
 	// アクション・物理・ステータスコンポーネントの追加
 	targetObject_->AddComponent("Status", std::make_unique<StatusComponent>(targetObject_.get()));
@@ -149,11 +154,15 @@ void TestScene::Initialize()
 	{
 		collider->SetCollisionLayer(CollisionLayer::Enemy);
 		collider->SetCollisionMask(CollisionLayer::Player | CollisionLayer::Terrain);
-		
-		auto handleTargetCollision = [this](const CollisionInfo& info) {
-			if (!info.otherCollider) return;
-			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain)) return;
-			if (!targetObject_) return;
+
+		auto handleTargetCollision = [this](const CollisionInfo& info)
+		{
+			if (!info.otherCollider)
+				return;
+			if (!(info.otherCollider->GetCollisionLayer() & CollisionLayer::Terrain))
+				return;
+			if (!targetObject_)
+				return;
 
 			// 衝突情報（法線とめり込み深さ）から押し戻しベクトルを計算して位置を補正
 			Vector3 pos = targetObject_->GetPosition();
@@ -162,7 +171,8 @@ void TestScene::Initialize()
 
 			// 接地判定と速度リセット
 			auto physics = targetObject_->GetComponent<PhysicsComponent>();
-			if (!physics) return;
+			if (!physics)
+				return;
 
 			if (info.normal.y > 0.0f)
 			{
@@ -176,14 +186,11 @@ void TestScene::Initialize()
 			}
 		};
 
-		collider->SetOnEnter([handleTargetCollision](const CollisionInfo& info) {
-			handleTargetCollision(info);
-		});
-		collider->SetOnStay([handleTargetCollision](const CollisionInfo& info) {
-			handleTargetCollision(info);
-		});
-		collider->SetOnExit([](const CollisionInfo& info) {
-		});
+		collider->SetOnEnter([handleTargetCollision](const CollisionInfo& info)
+							 { handleTargetCollision(info); });
+		collider->SetOnStay([handleTargetCollision](const CollisionInfo& info)
+							{ handleTargetCollision(info); });
+		collider->SetOnExit([](const CollisionInfo& info) {});
 	}
 	GameObjectManager::GetInstance()->Register(targetObject_.get());
 
@@ -192,9 +199,9 @@ void TestScene::Initialize()
 	groundObject_->SetName("GroundCube");
 	groundObject_->Initialize(sceneManager_->GetObject3dCommon(), sceneManager_->GetLightManager());
 	groundObject_->SetModel("cube");
-	groundObject_->GetModel()->SetUVScale({ 300.0f, 300.0f, 1.0f });
-	groundObject_->SetPosition({ 0.0f, -5.0f, 0.0f });
-	groundObject_->SetScale({ 150.0f, 10.0f, 150.0f });
+	groundObject_->GetModel()->SetUVScale({300.0f, 300.0f, 1.0f});
+	groundObject_->SetPosition({0.0f, -5.0f, 0.0f});
+	groundObject_->SetScale({150.0f, 10.0f, 150.0f});
 	if (auto* obj3d = groundObject_->GetObject3d())
 	{
 		obj3d->SetCastShadow(false);
@@ -236,11 +243,18 @@ void TestScene::Finalize()
 
 void TestScene::OnUpdatePlaying()
 {
-	if (debugCamera_)
+	static bool isDebugCameraActive = false;
+
+	if (Input::GetInstance()->TriggerKey(DIK_F7))
+	{
+		isDebugCameraActive = !isDebugCameraActive;
+	}
+
+	if (isDebugCameraActive)
 	{
 		debugCamera_->Update();
 	}
-	if (followCamera_)
+	else
 	{
 		followCamera_->Update();
 	}
@@ -279,57 +293,69 @@ void TestScene::DrawImGui()
 		{
 			cubeObject_->SetPosition(pos);
 		}
-		
+
 		ImGui::Separator();
-		
+
 		// 2. レイヤーとマスクの調整
 		if (auto collider = cubeObject_->GetComponent<AABBColliderComponent>())
 		{
 			ImGui::Text("Cube Collision Settings:");
-			
+
 			// レイヤー選択
 			int currentLayerIdx = 0;
 			ColliderLayer layer = collider->GetCollisionLayer();
-			if (layer == CollisionLayer::Player) currentLayerIdx = 0;
-			else if (layer == CollisionLayer::PlayerBullet) currentLayerIdx = 1;
-			else if (layer == CollisionLayer::Enemy) currentLayerIdx = 2;
-			else if (layer == CollisionLayer::None) currentLayerIdx = 3;
-			
-			const char* layerNames[] = { "Player", "PlayerBullet", "Enemy", "None" };
+			if (layer == CollisionLayer::Player)
+				currentLayerIdx = 0;
+			else if (layer == CollisionLayer::PlayerBullet)
+				currentLayerIdx = 1;
+			else if (layer == CollisionLayer::Enemy)
+				currentLayerIdx = 2;
+			else if (layer == CollisionLayer::None)
+				currentLayerIdx = 3;
+
+			const char* layerNames[] = {"Player", "PlayerBullet", "Enemy", "None"};
 			if (ImGui::Combo("Layer", &currentLayerIdx, layerNames, IM_ARRAYSIZE(layerNames)))
 			{
-				if (currentLayerIdx == 0) collider->SetCollisionLayer(CollisionLayer::Player);
-				else if (currentLayerIdx == 1) collider->SetCollisionLayer(CollisionLayer::PlayerBullet);
-				else if (currentLayerIdx == 2) collider->SetCollisionLayer(CollisionLayer::Enemy);
-				else if (currentLayerIdx == 3) collider->SetCollisionLayer(CollisionLayer::None);
+				if (currentLayerIdx == 0)
+					collider->SetCollisionLayer(CollisionLayer::Player);
+				else if (currentLayerIdx == 1)
+					collider->SetCollisionLayer(CollisionLayer::PlayerBullet);
+				else if (currentLayerIdx == 2)
+					collider->SetCollisionLayer(CollisionLayer::Enemy);
+				else if (currentLayerIdx == 3)
+					collider->SetCollisionLayer(CollisionLayer::None);
 			}
-			
+
 			// マスク（衝突対象）のトグル
 			uint32_t mask = collider->GetCollisionMask();
 			bool collideWithPlayer = (mask & CollisionLayer::Player) != 0;
 			bool collideWithEnemy = (mask & CollisionLayer::Enemy) != 0;
-			
+
 			ImGui::Text("Collides With:");
 			if (ImGui::Checkbox("Player (Layer)", &collideWithPlayer))
 			{
-				if (collideWithPlayer) mask |= CollisionLayer::Player;
-				else mask &= ~CollisionLayer::Player;
+				if (collideWithPlayer)
+					mask |= CollisionLayer::Player;
+				else
+					mask &= ~CollisionLayer::Player;
 				collider->SetCollisionMask(mask);
 			}
 			if (ImGui::Checkbox("Enemy (Layer)", &collideWithEnemy))
 			{
-				if (collideWithEnemy) mask |= CollisionLayer::Enemy;
-				else mask &= ~CollisionLayer::Enemy;
+				if (collideWithEnemy)
+					mask |= CollisionLayer::Enemy;
+				else
+					mask &= ~CollisionLayer::Enemy;
 				collider->SetCollisionMask(mask);
 			}
 		}
-		
+
 		ImGui::Separator();
 		ImGui::Text("Target (Red Cube) Info:");
 		ImGui::Text("Position: X=5.0, Y=2.0, Z=0.0");
 		ImGui::Text("Layer: Enemy");
 		ImGui::Text("Mask: Player (Only collides with Player)");
-		
+
 		// 判定のヒント表示
 		ImGui::Separator();
 		ImGui::TextWrapped("Tip: Move the Cube X position towards 5.0 to collide with the Red Cube. Change Cube's layer/mask above to see how filtering works. Check Output Log for collision events.");

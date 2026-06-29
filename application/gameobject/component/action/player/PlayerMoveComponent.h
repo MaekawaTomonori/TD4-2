@@ -26,6 +26,6 @@ namespace GameObjectComponent
 		Camera* camera_ = nullptr;
 
 		// 移動速度
-		float moveSpeed_ = 5.0f;
+		float moveSpeed_ = 10.0f;
 	};
 } // namespace GameObjectComponent
