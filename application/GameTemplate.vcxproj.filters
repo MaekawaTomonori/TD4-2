@@ -45,9 +45,6 @@
     <ClCompile Include="gameobject\component\action\common\StatusComponent.cpp">
       <Filter>gameobject\component\action\common</Filter>
     </ClCompile>
-    <ClCompile Include="gameobject\component\action\player\PlayerAttackComponent.cpp">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClCompile>
     <ClCompile Include="gameobject\component\action\player\PlayerInputComponent.cpp">
       <Filter>gameobject\component\action\player</Filter>
     </ClCompile>
@@ -80,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="gameobject\component\action\common\StatusComponent.h">
       <Filter>gameobject\component\action\common</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\component\action\player\PlayerAttackComponent.h">
-      <Filter>gameobject\component\action\player</Filter>
     </ClInclude>
     <ClInclude Include="gameobject\component\action\player\PlayerInputComponent.h">
       <Filter>gameobject\component\action\player</Filter>
