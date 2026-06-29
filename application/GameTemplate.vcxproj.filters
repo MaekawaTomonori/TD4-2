@@ -19,12 +19,6 @@
     <Filter Include="gameobject\component\action">
       <UniqueIdentifier>{2F863FFC-E377-71D8-89DA-01F2AD6F1555}</UniqueIdentifier>
     </Filter>
-    <Filter Include="gameobject\component\action\common">
-      <UniqueIdentifier>{B6C3C653-41B5-759B-5C99-ACB29017302B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="gameobject\component\action\player">
-      <UniqueIdentifier>{40F09B82-DC0F-0CCE-0F15-FA42698939F4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{55B558C7-EF82-0E6E-00E5-993B9E55D93B}</UniqueIdentifier>
     </Filter>
@@ -40,22 +34,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gameobject\component\action\common\PhysicsComponent.cpp">
-      <Filter>gameobject\component\action\common</Filter>
+      <Filter>gameobject\component\action</Filter>
     </ClCompile>
     <ClCompile Include="gameobject\component\action\common\StatusComponent.cpp">
-      <Filter>gameobject\component\action\common</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject\component\action\player\PlayerAttackComponent.cpp">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject\component\action\player\PlayerInputComponent.cpp">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject\component\action\player\PlayerMoveComponent.cpp">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject\component\action\player\PlayerReflectComponent.cpp">
-      <Filter>gameobject\component\action\player</Filter>
+      <Filter>gameobject\component\action</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resources\LoadGameResources.cpp">
@@ -70,28 +52,21 @@
     <ClCompile Include="scene\play\TitleScene.cpp">
       <Filter>scene\play</Filter>
     </ClCompile>
+    <ClCompile Include="gameobject\component\action\player\PlayerInputComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerMoveComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerReflectComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\player\PlayerAttackComponent.cpp" />
+    <ClCompile Include="gameobject\component\action\enemy\bomb\BombMoveComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="collision\CollisionLayer.h">
       <Filter>collision</Filter>
     </ClInclude>
     <ClInclude Include="gameobject\component\action\common\PhysicsComponent.h">
-      <Filter>gameobject\component\action\common</Filter>
+      <Filter>gameobject\component\action</Filter>
     </ClInclude>
     <ClInclude Include="gameobject\component\action\common\StatusComponent.h">
-      <Filter>gameobject\component\action\common</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\component\action\player\PlayerAttackComponent.h">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\component\action\player\PlayerInputComponent.h">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\component\action\player\PlayerMoveComponent.h">
-      <Filter>gameobject\component\action\player</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject\component\action\player\PlayerReflectComponent.h">
-      <Filter>gameobject\component\action\player</Filter>
+      <Filter>gameobject\component\action</Filter>
     </ClInclude>
     <ClInclude Include="scene\debug\ParticleTestScene.h">
       <Filter>scene\debug</Filter>
@@ -102,6 +77,11 @@
     <ClInclude Include="scene\play\TitleScene.h">
       <Filter>scene\play</Filter>
     </ClInclude>
+    <ClInclude Include="gameobject\component\action\player\PlayerInputComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerMoveComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerReflectComponent.h" />
+    <ClInclude Include="gameobject\component\action\player\PlayerAttackComponent.h" />
+    <ClInclude Include="gameobject\component\action\enemy\bomb\BombMoveComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
